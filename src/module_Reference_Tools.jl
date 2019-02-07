@@ -29,8 +29,10 @@ module module_Reference_Tools
     using CSV
     using Dates
 
-"""sub funcyion of StringToIntpart"""
-    function LetterToInt(char::Char)::Int64
+# """
+# sub funcyion of StringToIntpart
+# """
+    Base.@ccallable function LetterToInt(char::Char)::Int64
         x = Int(char)
         if ((x>=48) && (x<=57))
             return(x-48)
@@ -41,8 +43,10 @@ module module_Reference_Tools
         #return(findfirst((vecx .== char))-1)
     end
 
-"""convert String to Integer; if cannot, throw error"""
-    function StringToIntpart(char::String)::Int64
+# """
+# convert String to Integer; if cannot, throw error
+# """
+    Base.@ccallable function StringToIntpart(char::String)::Int64
         if (occursin(r"^-",char))
             signx = -1
             charx = replace(char, r"^-"=>"")
@@ -62,96 +66,12 @@ module module_Reference_Tools
         return(summed1*signx)
     end
 
-    # function StringToFloatpart(char::String)::Float64
-    #     x1 = LetterToInt.(collect(char))
-    #
-    #     fact = 0.1
-    #     summed1 = 0.0
-    #     for ix in 1:length(x1)
-    #         summed1 = summed1 + fact * x1[ix]
-    #         fact = fact*0.1
-    #     end
-    #     return( round( summed1, digits = length(x1)) )
-    # end
-    #
-    # function power10(y)::Float64
-    #     if (y>=0)
-    #         return(10.0^y)
-    #     end
-    #     return( round(10.0^y, digits = abs(y)))
-    # end
-    #
-    # function power10_32(y)::Float32
-    #     if (y>=0)
-    #         return(10.0f0^y)
-    #     end
-    #     return( round(10.0f0^y, digits = abs(y)))
-    # end
-    #
-    # function StringToFloat64(char::String)::Float64
-    #     charx = replace(char, r"[ \n]"=>"")
-    #
-    #     if (occursin(r"^-",charx))
-    #         fact = -1.0
-    #         charx = replace(charx, r"^-"=>"")
-    #     else
-    #         fact = 1.0
-    #         charx = replace(charx, r"^\+"=>"")
-    #     end
-    #
-    #     if (!occursin(r"[\.ef]", charx))  #as 123
-    #         return(StringToIntpart(charx)*fact)
-    #     end
-    #
-    #     charx = replace(charx, r"e$"=>"e0")
-    #     charx = replace(charx, r"f$"=>"f0")
-    #     charx = replace(charx, r"^\."=>"0.")
-    #     charx = replace(charx, r"\.e"=>".0e")
-    #     charx = replace(charx, r"\.f"=>".0f")
-    #
-    #     if (!occursin(r"[\.e]", charx))  #as 11f0
-    #         vecx = String.(split(charx, "f", limit = 2))
-    #         intval = StringToIntpart(vecx[1])
-    #         powerval = power10( StringToIntpart(vecx[2]))
-    #         return(fact * intval * powerval)
-    #     end
-    #
-    #     if (!occursin(r"[\.f]", charx))  #as 11e0
-    #         vecx = String.(split(charx, "e", limit = 2))
-    #         intval = StringToIntpart(vecx[1])
-    #         powerval = power10( StringToIntpart(vecx[2]))
-    #         return(fact * intval * powerval)
-    #     end
-    #
-    #     if (!occursin(r"[ef]", charx))  #as 1.25
-    #         vecx = String.(split(charx, ".", limit = 2))
-    #         intval = StringToIntpart(vecx[1])
-    #         floatval = StringToFloatpart(vecx[2])
-    #         return(fact * (intval + floatval) )
-    #     end
-    #
-    #     #if not returned, both . and [ef] exist
-    #     vecx = String.(split(charx, ".", limit = 2))
-    #     intval = StringToIntpart(vecx[1])
-    #
-    #     if (!occursin("e", charx))  #as 11.5f0
-    #         vecx = String.(split(vecx[2], "f", limit = 2))
-    #         floatval = StringToFloatpart(vecx[1])
-    #         powerval = power10( StringToIntpart(vecx[2]))
-    #         return(fact * (intval + floatval) * powerval)
-    #     end
-    #
-    #     if (!occursin("f", charx))  #as 11.2e0
-    #         vecx = String.(split(vecx[2], "e", limit = 2))
-    #         floatval = StringToFloatpart(vecx[1])
-    #         powerval = power10( StringToIntpart(vecx[2]))
-    #         return(fact * (intval + floatval) * powerval)
-    #     end
-    # end
 
 
-    """#select item not included in old, from new"""
-    function select_new(new::Array{String,1}, old::Array{String,1})::Array{String,1}
+    # """
+    # #select item not included in old, from new
+    # """
+    Base.@ccallable function select_new(new::Array{String,1}, old::Array{String,1})::Array{String,1}
         boo = fill(false, length(new));
         for ix in 1:length(new)
             boo[ix] = !any(new[ix] .== old)
@@ -159,8 +79,10 @@ module module_Reference_Tools
         return(new[boo])
     end
 
-"""#select item not included in old, from new (sumbol version)"""
-    function select_new(new::Array{Symbol,1}, old::Array{Symbol,1})::Array{Symbol,1}
+# """
+# #select item not included in old, from new (sumbol version)
+# """
+    Base.@ccallable function select_new(new::Array{Symbol,1}, old::Array{Symbol,1})::Array{Symbol,1}
         boo = fill(false, length(new));
         for ix in 1:length(new)
             boo[ix] = !any(new[ix] .== old)
@@ -168,11 +90,11 @@ module module_Reference_Tools
         return(new[boo])
     end
 
-"""
-returns Array{String,1}
-each element is PMID concatenated with comma ("11253645,14522846,...""), with maximum unitnum
-"""
-    function join_by_unit(vec::Array{String,1}, unitnum::Int64, collapse::String=",")::Array{String,1}
+# """
+# returns Array{String,1}
+# each element is PMID concatenated with comma ("11253645,14522846,...""), with maximum unitnum
+# """
+    Base.@ccallable function join_by_unit(vec::Array{String,1}, unitnum::Int64, collapse::String=",")::Array{String,1}
         if (length(vec) == 0)
             return(fill("",1))
         end
@@ -189,26 +111,30 @@ each element is PMID concatenated with comma ("11253645,14522846,...""), with ma
         return(ret)
     end
 
-""" read CSV as all String"""
-    function custom_CSV_read(file::String)::DataFrame
+# """
+#  read CSV as all String
+#  """
+    Base.@ccallable function custom_CSV_read(file::String)::DataFrame
         temp = CSV.read(file;  missingstring = "this_is_missing_hahaha", limit = 2)
         types = fill(String, size(temp,2))
         return(CSV.read(file; missingstring = "this_is_missing_hahaha", types = types))
     end
 
-""" delete first and last space and kaigyo   #"""
-    function delete_gomi_from_text(char::String)::String
+# """
+# delete first and last space and kaigyo   #
+# """
+    Base.@ccallable function delete_gomi_from_text(char::String)::String
         char = replace(char, r"^[ \n]*"=>"")
         char = replace(char, r"[ \n]*$"=>"")
         return(char)
     end
 
-"""
-function keep_first(vec::Array{String,1})::Array{Bool, 1}
-    return is Array{Bool, 1}
-if a nth element is not equal to any of 1st to n-1th, return[n] is true
-    """
-    function keep_first(vec::Array{String,1})::Array{Bool, 1}
+# """
+# Base.@ccallable function keep_first(vec::Array{String,1})::Array{Bool, 1}
+#     return is Array{Bool, 1}
+# if a nth element is not equal to any of 1st to n-1th, return[n] is true
+# """
+    Base.@ccallable function keep_first(vec::Array{String,1})::Array{Bool, 1}
         if length(vec)<=1
             return(fill(true,size(vec)))
         end
@@ -221,14 +147,14 @@ if a nth element is not equal to any of 1st to n-1th, return[n] is true
     end
 
 
-"""    function convert_readcube_bib(bibfile_abs::String, pmid_list_file_abs::String, unitnum::Int64=150, all_refresh::Bool=false)::Array{String,1}
-convert "readcube-exported bib file" to PMID Array, and write it  to "PMID_list_from_Julia.txt"
-returned value is new PMID list, concatenated with comma
-#
-bibfile_absis abs. path of bib file
-pmid_list_file_abs is abs. path of generated PMID Array file
-"""
-    function convert_readcube_bib(bibfile_abs::String, pmid_list_file_abs::String, unitnum::Int64=150, all_refresh::Bool=false)::Array{String,1}
+# """    Base.@ccallable function convert_readcube_bib(bibfile_abs::String, pmid_list_file_abs::String, unitnum::Int64=150, all_refresh::Bool=false)::Array{String,1}
+# convert "readcube-exported bib file" to PMID Array, and write it  to "PMID_list_from_Julia.txt"
+# returned value is new PMID list, concatenated with comma
+# #
+# bibfile_absis abs. path of bib file
+# pmid_list_file_abs is abs. path of generated PMID Array file
+# """
+    Base.@ccallable function convert_readcube_bib(bibfile_abs::String, pmid_list_file_abs::String, unitnum::Int64=150, all_refresh::Bool=false)::Array{String,1}
         text = try
                     String.(split(read(bibfile_abs, String), "\n"));
                 catch
@@ -295,45 +221,14 @@ pmid_list_file_abs is abs. path of generated PMID Array file
 
 
 
-    # function merge_dataframe(df1::DataFrame, df2::DataFrame)::DataFrame
-    #     intx = Int64(size(df1,1) == 0) * 2 + Int64(size(df2,1) == 0)
-    #     if (intx == 0) #neither is size 0
-    #         on = :PMID
-    #         both = unique([names(df1); names(df2)])
-    #
-    #         newsymb = select_new(both, names(df1))
-    #         for isymb in newsymb
-    #             df1[isymb] = ""
-    #         end
-    #
-    #         newsymb = select_new(both, names(df2))
-    #         for isymb in newsymb
-    #             df2[isymb] = ""
-    #         end
-    #         dfret = vcat(df1, df2)
-    #         remain = keep_first(dfret[:PMID]) #remove duplication
-    #
-    #         return(dfret[remain,:])
-    #     end
-    #
-    #     if (intx == 1) #df2 is size 0
-    #         return(df1)
-    #     end
-    #
-    #     if (intx == 2) #df1 is size 0
-    #         return(df2)
-    #     end
-    #
-    #     #both are size 0
-    #     return(DataFrame())
-    # end
-    """
-    function merge_dataframe(dfa::DataFrame, dfb::DataFrame)::DataFrame
 
-        merge two DataFrames
-        both dfa and dfb column are left (if duplicated dfa column is left)
-        """
-    function merge_dataframe(dfa::DataFrame, dfb::DataFrame)::DataFrame
+    # """
+    # Base.@ccallable function merge_dataframe(dfa::DataFrame, dfb::DataFrame)::DataFrame
+    #
+    #     merge two DataFrames
+    #     both dfa and dfb column are left (if duplicated dfa column is left)
+    #     """
+    Base.@ccallable function merge_dataframe(dfa::DataFrame, dfb::DataFrame)::DataFrame
         df1 = copy(dfa)
         df2 = copy(dfb)
         boo = fill(true, size(df2, 1))
@@ -398,17 +293,17 @@ pmid_list_file_abs is abs. path of generated PMID Array file
         # return(data_vacant)
     end
 
-"""
-function get_pubmed_dataframe_from_pmid_list(char0::String)::DataFrame
-    obtain DataFrame from char0
-    char0 is String of single PMID or several PMID concatenated with comma
-
-function get_pubmed_dataframe_from_pmid_list(char::Array{String,1})::DataFrame
-    Array{String, 1} VERSION
-
-
-"""
-    function get_pubmed_dataframe_from_pmid_list(char0::String)::DataFrame
+# """
+# Base.@ccallable function get_pubmed_dataframe_from_pmid_list(char0::String)::DataFrame
+#     obtain DataFrame from char0
+#     char0 is String of single PMID or several PMID concatenated with comma
+#
+# Base.@ccallable function get_pubmed_dataframe_from_pmid_list(char::Array{String,1})::DataFrame
+#     Array{String, 1} VERSION
+#
+#
+# """
+    Base.@ccallable function get_pubmed_dataframe_from_pmid_list(char0::String)::DataFrame
         if (char0 == r" *")
             #return DataFrame()
             return(data_vacant)
@@ -455,7 +350,7 @@ function get_pubmed_dataframe_from_pmid_list(char::Array{String,1})::DataFrame
         return(dataframe_pmid)
     end
 
-    function get_pubmed_dataframe_from_pmid_list(char::Array{String,1})::DataFrame
+    Base.@ccallable function get_pubmed_dataframe_from_pmid_list(char::Array{String,1})::DataFrame
         data_vacant = DataFrame( Symbol("PMID") => fill("", 0), Symbol("OWN") => fill("", 0), Symbol("STAT") => fill("", 0), Symbol("DCOM") => fill("", 0), Symbol("LR") => fill("", 0), Symbol("IS") => fill("", 0), Symbol("VI") => fill("", 0), Symbol("IP") => fill("", 0), Symbol("DP") => fill("", 0), Symbol("TI") => fill("", 0), Symbol("PG") => fill("", 0), Symbol("LID") => fill("", 0), Symbol("AB") => fill("", 0), Symbol("CI") => fill("", 0), Symbol("FAU") => fill("", 0),Symbol("AU") => fill("", 0), Symbol("AD") => fill("", 0), Symbol("LA") => fill("", 0), Symbol("PT") => fill("", 0), Symbol("DEP") => fill("", 0), Symbol("PL") => fill("", 0), Symbol("TA") => fill("", 0), Symbol("JT") => fill("", 0), Symbol("JID") => fill("", 0), Symbol("RN") => fill("", 0), Symbol("SB") => fill("", 0), Symbol("MH") => fill("", 0), Symbol("OTO") => fill("", 0), Symbol("OT") => fill("", 0), Symbol("EDAT") => fill("", 0), Symbol("MHDA") => fill("", 0), Symbol("CRDT") => fill("", 0), Symbol("PHST") => fill("", 0), Symbol("AID") => fill("", 0), Symbol("PST") => fill("", 0), Symbol("SO")=> fill("", 0), Symbol("GR") => fill("", 0), Symbol("CIN") => fill("", 0), Symbol("PMC") => fill("", 0), Symbol("MID") => fill("", 0), Symbol("RF") => fill("", 0), Symbol("COIS") => fill("", 0), Symbol("SI") => fill("", 0), Symbol("AUID") => fill("", 0), Symbol("CN") => fill("", 0), Symbol("IR") => fill("", 0), Symbol("FIR") => fill("", 0), Symbol("EIN") => fill("", 0), Symbol("UOF") => fill("", 0), Symbol("EFR") => fill("", 0) )
 
         dfret = data_vacant # DataFrame()
@@ -465,16 +360,16 @@ function get_pubmed_dataframe_from_pmid_list(char::Array{String,1})::DataFrame
         return(dfret)
     end
 
-"""
-function add_char_to_pubmed_csv(char::String, csvfile::String = "", returnonlynew::Bool = false)::DataFrame
-    #char is PMID1,PMID2,PMID3....,PMIDn
-    ## get PMIDx reference information and add to CSV file
-    #if returnonlynew is true, returns added database, else, return merged one
-
-function add_char_to_pubmed_csv(char::Array{String,1}, csvfile::String, returnonlynew::Bool = false)::DataFrame
-    Array version
-"""
-    function add_char_to_pubmed_csv(char::String, csvfile::String = "", returnonlynew::Bool = false)::DataFrame
+# """
+# Base.@ccallable function add_char_to_pubmed_csv(char::String, csvfile::String = "", returnonlynew::Bool = false)::DataFrame
+#     #char is PMID1,PMID2,PMID3....,PMIDn
+#     ## get PMIDx reference information and add to CSV file
+#     #if returnonlynew is true, returns added database, else, return merged one
+#
+# Base.@ccallable function add_char_to_pubmed_csv(char::Array{String,1}, csvfile::String, returnonlynew::Bool = false)::DataFrame
+#     Array version
+# """
+    Base.@ccallable function add_char_to_pubmed_csv(char::String, csvfile::String = "", returnonlynew::Bool = false)::DataFrame
         data_vacant = DataFrame( Symbol("PMID") => fill("", 0), Symbol("OWN") => fill("", 0), Symbol("STAT") => fill("", 0), Symbol("DCOM") => fill("", 0), Symbol("LR") => fill("", 0), Symbol("IS") => fill("", 0), Symbol("VI") => fill("", 0), Symbol("IP") => fill("", 0), Symbol("DP") => fill("", 0), Symbol("TI") => fill("", 0), Symbol("PG") => fill("", 0), Symbol("LID") => fill("", 0), Symbol("AB") => fill("", 0), Symbol("CI") => fill("", 0), Symbol("FAU") => fill("", 0),Symbol("AU") => fill("", 0), Symbol("AD") => fill("", 0), Symbol("LA") => fill("", 0), Symbol("PT") => fill("", 0), Symbol("DEP") => fill("", 0), Symbol("PL") => fill("", 0), Symbol("TA") => fill("", 0), Symbol("JT") => fill("", 0), Symbol("JID") => fill("", 0), Symbol("RN") => fill("", 0), Symbol("SB") => fill("", 0), Symbol("MH") => fill("", 0), Symbol("OTO") => fill("", 0), Symbol("OT") => fill("", 0), Symbol("EDAT") => fill("", 0), Symbol("MHDA") => fill("", 0), Symbol("CRDT") => fill("", 0), Symbol("PHST") => fill("", 0), Symbol("AID") => fill("", 0), Symbol("PST") => fill("", 0), Symbol("SO")=> fill("", 0), Symbol("GR") => fill("", 0), Symbol("CIN") => fill("", 0), Symbol("PMC") => fill("", 0), Symbol("MID") => fill("", 0), Symbol("RF") => fill("", 0), Symbol("COIS") => fill("", 0), Symbol("SI") => fill("", 0), Symbol("AUID") => fill("", 0), Symbol("CN") => fill("", 0), Symbol("IR") => fill("", 0), Symbol("FIR") => fill("", 0), Symbol("EIN") => fill("", 0), Symbol("UOF") => fill("", 0), Symbol("EFR") => fill("", 0) )
 
         pmid_data_old = try
@@ -507,7 +402,7 @@ function add_char_to_pubmed_csv(char::Array{String,1}, csvfile::String, returnon
     #char is PMID1,PMID2,PMID3....,PMIDn
     ## get PMIDx reference information and add to CSV file
     #if returnonlynew is true, returns added database, else, return merged one
-    function add_char_to_pubmed_csv(char::Array{String,1}, csvfile::String, returnonlynew::Bool = false)::DataFrame
+    Base.@ccallable function add_char_to_pubmed_csv(char::Array{String,1}, csvfile::String, returnonlynew::Bool = false)::DataFrame
         data_vacant = DataFrame( Symbol("PMID") => fill("", 0), Symbol("OWN") => fill("", 0), Symbol("STAT") => fill("", 0), Symbol("DCOM") => fill("", 0), Symbol("LR") => fill("", 0), Symbol("IS") => fill("", 0), Symbol("VI") => fill("", 0), Symbol("IP") => fill("", 0), Symbol("DP") => fill("", 0), Symbol("TI") => fill("", 0), Symbol("PG") => fill("", 0), Symbol("LID") => fill("", 0), Symbol("AB") => fill("", 0), Symbol("CI") => fill("", 0), Symbol("FAU") => fill("", 0),Symbol("AU") => fill("", 0), Symbol("AD") => fill("", 0), Symbol("LA") => fill("", 0), Symbol("PT") => fill("", 0), Symbol("DEP") => fill("", 0), Symbol("PL") => fill("", 0), Symbol("TA") => fill("", 0), Symbol("JT") => fill("", 0), Symbol("JID") => fill("", 0), Symbol("RN") => fill("", 0), Symbol("SB") => fill("", 0), Symbol("MH") => fill("", 0), Symbol("OTO") => fill("", 0), Symbol("OT") => fill("", 0), Symbol("EDAT") => fill("", 0), Symbol("MHDA") => fill("", 0), Symbol("CRDT") => fill("", 0), Symbol("PHST") => fill("", 0), Symbol("AID") => fill("", 0), Symbol("PST") => fill("", 0), Symbol("SO")=> fill("", 0), Symbol("GR") => fill("", 0), Symbol("CIN") => fill("", 0), Symbol("PMC") => fill("", 0), Symbol("MID") => fill("", 0), Symbol("RF") => fill("", 0), Symbol("COIS") => fill("", 0), Symbol("SI") => fill("", 0), Symbol("AUID") => fill("", 0), Symbol("CN") => fill("", 0), Symbol("IR") => fill("", 0), Symbol("FIR") => fill("", 0), Symbol("EIN") => fill("", 0), Symbol("UOF") => fill("", 0), Symbol("EFR") => fill("", 0) )
 
         pmid_data_old = try
@@ -536,7 +431,7 @@ function add_char_to_pubmed_csv(char::Array{String,1}, csvfile::String, returnon
         return(pmid_data)
     end
 
-    function two_string_vector_combination(veca::Array{String, 1}, vecb::Array{String, 1})::Array{String, 1}
+    Base.@ccallable function two_string_vector_combination(veca::Array{String, 1}, vecb::Array{String, 1})::Array{String, 1}
         # veca = ["DEP_"; "DP_"; ""]
         # vecb = ["Year"; "Month"; "Monthname"; "Monthabbr"; "Day"]
         vecx = fill("", 0)
@@ -546,7 +441,7 @@ function add_char_to_pubmed_csv(char::Array{String,1}, csvfile::String, returnon
         return(vecx)
     end
 
-    function return_year_monthx3_day_sub_sub(charx0::String)::Array{String, 1}
+    Base.@ccallable function return_year_monthx3_day_sub_sub(charx0::String)::Array{String, 1}
         charx = replace(charx0, "\n"=>" ");
         charx = replace(charx, r" +"=>" ");
         charx = replace(charx, ", "=>" ");
@@ -576,7 +471,7 @@ function add_char_to_pubmed_csv(char::Array{String,1}, csvfile::String, returnon
         )
     end
 
-    function return_year_monthx3_day_sub(charx::String)::Array{String, 1}
+    Base.@ccallable function return_year_monthx3_day_sub(charx::String)::Array{String, 1}
         charx = replace(charx, "\n"=>" ");
         charx = replace(charx, r" +"=>" ");
         charx = replace(charx, ", "=>" ");
@@ -630,7 +525,7 @@ function add_char_to_pubmed_csv(char::Array{String,1}, csvfile::String, returnon
     # return_year_monthx3_day_sub(charx)
 
     #return [year; month; monthname; monthabbr; day; ]
-    function return_year_monthx3_day(charx::String)::Array{String, 1}
+    Base.@ccallable function return_year_monthx3_day(charx::String)::Array{String, 1}
         if (charx == "")
             return(fill("", 5))
         end
@@ -645,7 +540,7 @@ function add_char_to_pubmed_csv(char::Array{String,1}, csvfile::String, returnon
         end
     end
 
-    function vector_of_vector_to_array(vec::Array{Array{String,1},1})::Array{Union{String,Missing},2}
+    Base.@ccallable function vector_of_vector_to_array(vec::Array{Array{String,1},1})::Array{Union{String,Missing},2}
         nrow = length(vec)
         leng = fill(0, nrow)
         for ix in 1:nrow
@@ -660,7 +555,7 @@ function add_char_to_pubmed_csv(char::Array{String,1}, csvfile::String, returnon
         return(myarray)
     end
 
-    # function vector_of_vector_to_array(vec)
+    # Base.@ccallable function vector_of_vector_to_array(vec)
     #     mytype = typeof(vec[1][1])
     #     nrow = length(vec)
     #     leng = fill(0, nrow)
@@ -676,16 +571,16 @@ function add_char_to_pubmed_csv(char::Array{String,1}, csvfile::String, returnon
     #     return(myarray)
     # end
 
-    """
-    return splitted String (String Format) of String
-    return( String.(split(char, sep)) )
-    """
-    function mysplit(char::String, sep::String)::Array{String, 1}
+    # """
+    # return splitted String (String Format) of String
+    # return( String.(split(char, sep)) )
+    # """
+    Base.@ccallable function mysplit(char::String, sep::String)::Array{String, 1}
         return( String.(split(char, sep)) )
     end
 
     #return splitted Vector{String} (String Format) by char
-    function mysplit(char::Array{String, 1}, sep::String)::Array{Array{String,1},1}
+    Base.@ccallable function mysplit(char::Array{String, 1}, sep::String)::Array{Array{String,1},1}
         vecx = split.(char, sep)
         ret = fill(fill("",2), length(vecx))
 
@@ -696,7 +591,7 @@ function add_char_to_pubmed_csv(char::Array{String,1}, csvfile::String, returnon
     end
 
     #First split Strng by sep1 then split substring by sep2...
-    function doublesplit(char::String, sep1::String, sep2::String)::Array{Array{String,1},1}
+    Base.@ccallable function doublesplit(char::String, sep1::String, sep2::String)::Array{Array{String,1},1}
         vecx = mysplit(char, sep1)
         # return(typeof(vecx))
         ret = fill(fill("",2), length(vecx))
@@ -708,7 +603,7 @@ function add_char_to_pubmed_csv(char::Array{String,1}, csvfile::String, returnon
     end
 
     #First split Array{String, 1} by sep1 then split substring by sep2...
-    function doublesplit(char::Array{String, 1}, sep1::String, sep2::String)::Array{Array{Array{String,1},1},1}
+    Base.@ccallable function doublesplit(char::Array{String, 1}, sep1::String, sep2::String)::Array{Array{Array{String,1},1},1}
         # sep2num = maximum(length.(mysplit.(char, sep2)))
         # sep1num = maximum(length.(mysplit.(char, sep1)))
         ret = fill(fill(fill("",2),2), length(char))
@@ -726,12 +621,11 @@ function add_char_to_pubmed_csv(char::Array{String,1}, csvfile::String, returnon
     # charx = "2015 Jan 4"
     # return_year_monthx3_day(charx)
 
-"""
-function add_name_list_and_data_to_pmid_data(pmid_data0::DataFrame)::DataFrame
-    add author name list and DEP&DP year, month, day
-"""
-
-    function add_name_list_and_data_to_pmid_data(pmid_data0::DataFrame)::DataFrame
+# """
+# Base.@ccallable function add_name_list_and_data_to_pmid_data(pmid_data0::DataFrame)::DataFrame
+#     add author name list and DEP&DP year, month, day
+# """
+    Base.@ccallable function add_name_list_and_data_to_pmid_data(pmid_data0::DataFrame)::DataFrame
         pmid_data = copy(pmid_data0)
         ##subroutine
         reg=r"[#\\$%&_{}<>^|~\\\\]<>"
@@ -843,20 +737,20 @@ function add_name_list_and_data_to_pmid_data(pmid_data0::DataFrame)::DataFrame
         return(pmid_data)
     end
 
-"""
-    #authorstyle = ["#Lastname"; " "; "#Firstname_1"]
-    #Lastname and #Firstname_XXX are replaced with variables
-    Firstname_Full is full version
-    Firstname_0 is A-B style
-    Firstname_1 is AB
-    Firstname_2 is A Z-H
-    Firstname_3 is A Z H
-    Firstname_4 is A. Z. -H.
-    Firstname_5 is A. Z. H
-
-    #get author list for eachrow
-"""
-    function get_each_author(pmid_data0::DataFrame, authorstyle::Array{String, 1} = ["#Lastname"; " "; "#Firstname_1"])::Array{String, 1}
+# """
+#     #authorstyle = ["#Lastname"; " "; "#Firstname_1"]
+#     #Lastname and #Firstname_XXX are replaced with variables
+#     Firstname_Full is full version
+#     Firstname_0 is A-B style
+#     Firstname_1 is AB
+#     Firstname_2 is A Z-H
+#     Firstname_3 is A Z H
+#     Firstname_4 is A. Z. -H.
+#     Firstname_5 is A. Z. H
+#
+#     #get author list for eachrow
+# """
+    Base.@ccallable function get_each_author(pmid_data0::DataFrame, authorstyle::Array{String, 1} = ["#Lastname"; " "; "#Firstname_1"])::Array{String, 1}
         pmid_data = copy(pmid_data0)
         rownum = size(pmid_data, 1)
         ret = fill("", rownum)
@@ -890,19 +784,19 @@ function add_name_list_and_data_to_pmid_data(pmid_data0::DataFrame)::DataFrame
         return(ret)
     end
 
-"""
-    ##get author List
-    #max_all #max author number expressed without et al
-    #etal_num #author number written when et al is used
-    #authorstyle: authorstyle
-    #sep_vec
-    #[1] #sep between authors
-    #[2] #sep between last two authors
-    #[3] #sep between only TWO auhtors
-    #[4] #sep between author and other part
-    #[5] #et. al
-"""
-    function get_author_list(pmid_data0::DataFrame, max_all::Int64 = 1, etal_num::Int64 = 1,
+# """
+#     ##get author List
+#     #max_all #max author number expressed without et al
+#     #etal_num #author number written when et al is used
+#     #authorstyle: authorstyle
+#     #sep_vec
+#     #[1] #sep between authors
+#     #[2] #sep between last two authors
+#     #[3] #sep between only TWO auhtors
+#     #[4] #sep between author and other part
+#     #[5] #et. al
+# """
+    Base.@ccallable function get_author_list(pmid_data0::DataFrame, max_all::Int64 = 1, etal_num::Int64 = 1,
         authorstyle::Array{String, 1} = ["#Lastname"; " "; "#Firstname_1"],
         sep_vec::Array{String, 1} = [", "; ", and"; " and "; ". "; ", et. al. "])::Array{String, 1}
 
@@ -913,7 +807,7 @@ function add_name_list_and_data_to_pmid_data(pmid_data0::DataFrame)::DataFrame
         sepafter = sep_vec[4]
         etal = sep_vec[5]
 
-        #########function(pmid_data)
+        #########Base.@ccallable function(pmid_data)
         author_list = get_each_author(pmid_data, authorstyle)
 
         max_all2 = max_all
@@ -966,27 +860,27 @@ function add_name_list_and_data_to_pmid_data(pmid_data0::DataFrame)::DataFrame
             # author_list[ix] = replace(char, "\n"=>sepauthor)
         end
         return(author_list);
-        ######end of function
+        ######end of Base.@ccallable function
     end
 
-    """
-        ##make a reference style
-        #max_all #max author number expressed without et al
-        #etal_num #author number written when et al is used
-        #authorstyle: authorstyle
-
-        #sep_vec
-        #[1] #sep between authors
-        #[2] #sep between last two authors
-        #[3] #sep between only TWO auhtors
-        #[4] #sep between author and other part
-        #[5] #et. al
-
-        #refstyle
-        "%author_list" is replaced with author list Array{String}
-        #TI etc is MEDLINE item
-    """
-    function add_single_reference_string(pmid_data0::DataFrame, refname::String, max_all::Int64 = 1, etal_num::Int64 = 1,
+    # """
+    #     ##make a reference style
+    #     #max_all #max author number expressed without et al
+    #     #etal_num #author number written when et al is used
+    #     #authorstyle: authorstyle
+    #
+    #     #sep_vec
+    #     #[1] #sep between authors
+    #     #[2] #sep between last two authors
+    #     #[3] #sep between only TWO auhtors
+    #     #[4] #sep between author and other part
+    #     #[5] #et. al
+    #
+    #     #refstyle
+    #     "%author_list" is replaced with author list Array{String}
+    #     #TI etc is MEDLINE item
+    # """
+    Base.@ccallable function add_single_reference_string(pmid_data0::DataFrame, refname::String, max_all::Int64 = 1, etal_num::Int64 = 1,
         authorstyle::Array{String, 1} = ["#Lastname"; " "; "#Firstname_1"],
         sep_vec::Array{String, 1} = [", "; ", and"; " and "; ". "; ", et. al. "],
         refstyle = ["%author_list"; "#TI"; " "; "#TA"; " "; "#Year"; " <b>"; "#VI"; "</b>: "; "#PG"; ". "]
@@ -1037,11 +931,11 @@ function add_name_list_and_data_to_pmid_data(pmid_data0::DataFrame)::DataFrame
         # val[2] = ret2
         return(pmid_data)
     end
-"""
-function add_several_reference_string(pmid_data0::DataFrame)::DataFrame
-add several reference stylesheet to  pmid_data0
-"""
-    function add_several_reference_string(pmid_data0::DataFrame)::DataFrame
+# """
+# Base.@ccallable function add_several_reference_string(pmid_data0::DataFrame)::DataFrame
+# add several reference stylesheet to  pmid_data0
+# """
+    Base.@ccallable function add_several_reference_string(pmid_data0::DataFrame)::DataFrame
         pmid_data = copy(pmid_data0)
         max_all = 1 #max author number expressed without et al
         etal_num = 1 #author number written when et al is used
@@ -1069,10 +963,10 @@ add several reference stylesheet to  pmid_data0
         return(pmid_data)
     end
 
-"""
-function add_PMID_to_list_and_write_to_csv(char0::String, pmid_list_file_abs::String, pubmed_data_generated_file_abs::String)::DataFrame
-"""
-    function add_PMID_to_list_and_write_to_csv(char0::String, pmid_list_file_abs::String, pubmed_data_generated_file_abs::String)::DataFrame
+# """
+# Base.@ccallable function add_PMID_to_list_and_write_to_csv(char0::String, pmid_list_file_abs::String, pubmed_data_generated_file_abs::String)::DataFrame
+# """
+    Base.@ccallable function add_PMID_to_list_and_write_to_csv(char0::String, pmid_list_file_abs::String, pubmed_data_generated_file_abs::String)::DataFrame
         char = replace(char0, " "=>"")
         char = replace(char, "\t"=>"")
         char = replace(char, "\n"=>",")
@@ -1111,7 +1005,7 @@ function add_PMID_to_list_and_write_to_csv(char0::String, pmid_list_file_abs::St
         return(copy(pmid_data))
     end
 
-    function add_PMID_to_list_and_write_to_csv(char0::Array{String, 1}, pmid_list_file_abs::String, pubmed_data_generated_file_abs::String)::DataFrame
+    Base.@ccallable function add_PMID_to_list_and_write_to_csv(char0::Array{String, 1}, pmid_list_file_abs::String, pubmed_data_generated_file_abs::String)::DataFrame
         subdata = DataFrame( Symbol("PMID") => fill("", 0), Symbol("OWN") => fill("", 0), Symbol("STAT") => fill("", 0), Symbol("DCOM") => fill("", 0), Symbol("LR") => fill("", 0), Symbol("IS") => fill("", 0), Symbol("VI") => fill("", 0), Symbol("IP") => fill("", 0), Symbol("DP") => fill("", 0), Symbol("TI") => fill("", 0), Symbol("PG") => fill("", 0), Symbol("LID") => fill("", 0), Symbol("AB") => fill("", 0), Symbol("CI") => fill("", 0), Symbol("FAU") => fill("", 0),Symbol("AU") => fill("", 0), Symbol("AD") => fill("", 0), Symbol("LA") => fill("", 0), Symbol("PT") => fill("", 0), Symbol("DEP") => fill("", 0), Symbol("PL") => fill("", 0), Symbol("TA") => fill("", 0), Symbol("JT") => fill("", 0), Symbol("JID") => fill("", 0), Symbol("RN") => fill("", 0), Symbol("SB") => fill("", 0), Symbol("MH") => fill("", 0), Symbol("OTO") => fill("", 0), Symbol("OT") => fill("", 0), Symbol("EDAT") => fill("", 0), Symbol("MHDA") => fill("", 0), Symbol("CRDT") => fill("", 0), Symbol("PHST") => fill("", 0), Symbol("AID") => fill("", 0), Symbol("PST") => fill("", 0), Symbol("SO")=> fill("", 0), Symbol("GR") => fill("", 0), Symbol("CIN") => fill("", 0), Symbol("PMC") => fill("", 0), Symbol("MID") => fill("", 0), Symbol("RF") => fill("", 0), Symbol("COIS") => fill("", 0), Symbol("SI") => fill("", 0), Symbol("AUID") => fill("", 0), Symbol("CN") => fill("", 0), Symbol("IR") => fill("", 0), Symbol("FIR") => fill("", 0), Symbol("EIN") => fill("", 0), Symbol("UOF") => fill("", 0), Symbol("EFR") => fill("", 0) )
 
         for ix in char0
@@ -1120,15 +1014,15 @@ function add_PMID_to_list_and_write_to_csv(char0::String, pmid_list_file_abs::St
         return(copy(subdata))
     end
 
-    function get_pmid_from_URL(char::String)::String
+    Base.@ccallable function get_pmid_from_URL(char::String)::String
         char = replace(char, "?term="=>"")
         char = replace(char, r"https://www-ncbi-nlm-nih-gov.*/pubmed/"=>"")
         char = replace(char, "https://www.ncbi.nlm.nih.gov/pubmed/"=>"")
         return(char)
-    end #of function
+    end #of Base.@ccallable function
 
     #write html file and return String
-    function write_html(htmltitle::String, htmlbody::String, outputfile::String = "", iopen::Bool = false)::String
+    Base.@ccallable function write_html(htmltitle::String, htmlbody::String, outputfile::String = "", iopen::Bool = false)::String
         char1 = "<!DOCTYPE html>  <html lang=\"ja\"> \n<head> <meta charset=\"UTF-8\">\n<title> " * htmltitle * " </title>\n<style> </style>\n</head>\n<body>\n" * htmlbody * "\n</body>\n</html>"
 
         try
@@ -1146,11 +1040,11 @@ function add_PMID_to_list_and_write_to_csv(char0::String, pmid_list_file_abs::St
         return(char1)
     end
 
-    function char_from_0_to_9XX(x::Int64)::Char
+    Base.@ccallable function char_from_0_to_9XX(x::Int64)::Char
         return(Char(0x30+x))
     end
 
-    function Int64ToString(x::Int64)::String
+    Base.@ccallable function Int64ToString(x::Int64)::String
         if (x < 0)
             char0 = "-"
             x2 = -x
@@ -1161,12 +1055,12 @@ function add_PMID_to_list_and_write_to_csv(char0::String, pmid_list_file_abs::St
         return( char0 * join( char_from_0_to_9XX.(reverse(digits(x2))) ) )
     end
 
-"""
-function make_html_from_dataframe(pmid_data0::DataFrame, writehtml::Bool = true)::String
-
-make html file of reference and show it from dataframe
-"""
-    function make_html_from_dataframe(pmid_data0::DataFrame, writehtml::Bool = true)::String
+# """
+# Base.@ccallable function make_html_from_dataframe(pmid_data0::DataFrame, writehtml::Bool = true)::String
+#
+# make html file of reference and show it from dataframe
+# """
+    Base.@ccallable function make_html_from_dataframe(pmid_data0::DataFrame, writehtml::Bool = true)::String
         pmid_data= copy(pmid_data0)
         # pmid_data.FAU
 
@@ -1211,17 +1105,17 @@ make html file of reference and show it from dataframe
         end
         return(ret)
         #write_html("test", ret, "test.html", true)
-    end #of function
+    end #of Base.@ccallable function
 
-    """
-    function make_html_from_pmid(char1::String, writehtml::Bool = true)::String
-    function make_html_from_pmid(charx::Array{String,1}, writehtml::Bool = true)::Strin
-    function make_html_from_pmid(int::Int64, writehtml::Bool = true)::String
-    ase.@ccallable function make_html_from_pmid(int::Array{Int64,1}, writehtml::Bool = true)::String
-
-    make html filefrom PMID and show it from dataframe
-    """
-    function make_html_from_pmid(char1::String, writehtml::Bool = true)::String
+    # """
+    # Base.@ccallable function make_html_from_pmid(char1::String, writehtml::Bool = true)::String
+    # Base.@ccallable function make_html_from_pmid(charx::Array{String,1}, writehtml::Bool = true)::Strin
+    # Base.@ccallable function make_html_from_pmid(int::Int64, writehtml::Bool = true)::String
+    # ase.@ccallable Base.@ccallable function make_html_from_pmid(int::Array{Int64,1}, writehtml::Bool = true)::String
+    #
+    # make html filefrom PMID and show it from dataframe
+    # """
+    Base.@ccallable function make_html_from_pmid(char1::String, writehtml::Bool = true)::String
         char = String.(split(char1, ","))
         charx = get_pmid_from_URL.(char)
         #charx = get_pmid_from_URL(char1)
@@ -1235,9 +1129,9 @@ make html file of reference and show it from dataframe
         ret = make_html_from_dataframe(newdata, writehtml)
         return(ret)
         #write_html("test", ret, "test.html", true)
-    end #of function
+    end #of Base.@ccallable function
 
-    function make_html_from_pmid(charx::Array{String,1}, writehtml::Bool = true)::String
+    Base.@ccallable function make_html_from_pmid(charx::Array{String,1}, writehtml::Bool = true)::String
         ret = ""
         for ix in charx
             ret = ret * make_html_from_pmid(ix, false) * "\n\n"
@@ -1248,23 +1142,23 @@ make html file of reference and show it from dataframe
         return(ret)
     end
 
-    function make_html_from_pmid(int::Int64, writehtml::Bool = true)::String
+    Base.@ccallable function make_html_from_pmid(int::Int64, writehtml::Bool = true)::String
         charx = Int64ToString(int)
         ret = make_html_from_pmid(charx, writehtml)
         return( ret )
     end
 
-    function make_html_from_pmid(int::Array{Int64,1}, writehtml::Bool = true)::String
+    Base.@ccallable function make_html_from_pmid(int::Array{Int64,1}, writehtml::Bool = true)::String
         charx = Int64ToString.(int)
         ret = make_html_from_pmid(charx, writehtml)
         return( ret )
     end
 
-"""
-function make_html_from_csv(csvfile::String, writehtml::Bool = true)::String
-make html file from generated CSV and show it from dataframe
-"""
-    function make_html_from_csv(csvfile::String, writehtml::Bool = true)::String
+# """
+# Base.@ccallable function make_html_from_csv(csvfile::String, writehtml::Bool = true)::String
+# make html file from generated CSV and show it from dataframe
+# """
+    Base.@ccallable function make_html_from_csv(csvfile::String, writehtml::Bool = true)::String
         try
             pmid_data = custom_CSV_read(csvfile)
             ret = make_html_from_dataframe(pmid_data, writehtml)
@@ -1272,17 +1166,17 @@ make html file from generated CSV and show it from dataframe
         catch
             return("")
         end
-    end #of function
+    end #of Base.@ccallable function
 
 
-"""
-function obtain_medline_from_readcube_bib(bibfile_abs::String, pmid_list_file_abs::String, pubmed_data_processed_file_abs::String)::DataFrame
-
-    # obtain and record medline dataframe from internet
-    # pmid_list_file_abs is list of pmid_data
-    # pubmed_data_processed_file_abs is csv file
-"""
-    function obtain_medline_from_readcube_bib(bibfile_abs::String, pmid_list_file_abs::String, pubmed_data_processed_file_abs::String)::DataFrame
+# """
+# Base.@ccallable function obtain_medline_from_readcube_bib(bibfile_abs::String, pmid_list_file_abs::String, pubmed_data_processed_file_abs::String)::DataFrame
+#
+#     # obtain and record medline dataframe from internet
+#     # pmid_list_file_abs is list of pmid_data
+#     # pubmed_data_processed_file_abs is csv file
+# """
+    Base.@ccallable function obtain_medline_from_readcube_bib(bibfile_abs::String, pmid_list_file_abs::String, pubmed_data_processed_file_abs::String)::DataFrame
         unitnum = 150;
         #obtain PMID strings joined by "," as char
         char = convert_readcube_bib(bibfile_abs, pmid_list_file_abs, unitnum, true)
@@ -1297,6 +1191,6 @@ function obtain_medline_from_readcube_bib(bibfile_abs::String, pmid_list_file_ab
             throw("file not found: ")
         end
         return(pmid_data)
-    end #of function
+    end #of Base.@ccallable function
 
 end  # module
