@@ -23,6 +23,8 @@ module module_Reference_Tools
     export make_html_from_pmid
     export make_html_from_csv
     export make_html_from_dataframe
+    export custom_CSV_read
+    export write_html
 
     using DataFrames
     using HTTP
